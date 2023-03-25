@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.video.VideoSize
-import com.heyanle.easybangumi4.ui.common.player.surface.EasySurfaceView
+import loli.ball.easyplayer2.surface.EasySurfaceView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive

@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.heyanle.easybangumi4.ui.common.player.utils.TimeUtils
+import loli.ball.easyplayer2.utils.TimeUtils
 
 /**
  * Created by HeYanLe on 2023/3/8 22:04.

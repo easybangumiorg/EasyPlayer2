@@ -19,8 +19,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.heyanle.easybangumi4.ui.common.player.utils.systemVolume
-import com.heyanle.easybangumi4.ui.common.player.utils.windowBrightness
+import loli.ball.easyplayer2.utils.systemVolume
+import loli.ball.easyplayer2.utils.windowBrightness
 
 /**
  * Created by LoliBall on 2023/3/2 11:37.

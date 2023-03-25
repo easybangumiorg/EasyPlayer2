@@ -30,7 +30,6 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -38,10 +37,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.heyanle.easybangumi4.ui.common.player.utils.*
-import loli.ball.easyplayer2.BackgroundBasedBox
-import loli.ball.easyplayer2.utils.OnLifecycleEvent
-import loli.ball.easyplayer2.utils.OnOrientationEvent
+import loli.ball.easyplayer2.utils.*
 
 /**
  * Created by HeYanLe on 2023/3/9 11:23.
