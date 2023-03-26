@@ -19,11 +19,11 @@ import com.google.android.exoplayer2.C.TIME_UNSET
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.video.VideoSize
-import loli.ball.easyplayer2.surface.EasySurfaceView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import loli.ball.easyplayer2.surface.EasySurfaceView
 
 /**
  * Created by HeYanLe on 2023/3/8 22:45.
@@ -73,10 +73,8 @@ class ControlViewModel(
 
     var title by mutableStateOf("")
 
-
     var isLongPress by mutableStateOf(false)
     var lastSpeed = 1.0f
-
 
     private var lastHideJob: Job? = null
     private var loopJob: Job? = null
@@ -85,7 +83,6 @@ class ControlViewModel(
 
     @SuppressLint("StaticFieldLeak")
     val surfaceView = EasySurfaceView(context)
-
 
     fun onLockedChange(locked: Boolean) {
         viewModelScope.launch {
@@ -99,9 +96,7 @@ class ControlViewModel(
         }
     }
 
-
     fun onFullScreen(fullScreen: Boolean, reverse: Boolean = false, ctx: Activity) {
-
         viewModelScope.launch {
             val oldFullScreen = isFullScreen
             val oldReverse = isReverse
@@ -208,7 +203,6 @@ class ControlViewModel(
         isLongPress = true
     }
 
-
     fun onSingleClick() {
         if (isNormalLockedControlShow) {
             isNormalLockedControlShow = false
@@ -216,7 +210,6 @@ class ControlViewModel(
             showControlWithHideDelay()
         }
     }
-
 
     fun onLaunch() {
         exoPlayer.setVideoSurfaceView(surfaceView)
@@ -243,7 +236,6 @@ class ControlViewModel(
             }
         }
     }
-
 
     init {
         exoPlayer.addListener(this)
@@ -279,14 +271,9 @@ class ControlViewModel(
         }
     }
 
-
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         super.onIsPlayingChanged(isPlaying)
-        if (isPlaying) {
-            surfaceView.keepScreenOn = true
-        } else {
-            surfaceView.keepScreenOn = true
-        }
+        surfaceView.keepScreenOn = isPlaying
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
@@ -324,28 +311,25 @@ class ControlViewModel(
     }
 
     private fun syncTimeIfNeed() {
-        if (exoPlayer.isMedia()) {
-            if (during != exoPlayer.duration) {
-                during = if (exoPlayer.duration == TIME_UNSET) {
-                    0
-                } else {
-                    exoPlayer.duration
-                }
-
-            }
-            if (position != exoPlayer.currentPosition) {
-                position = exoPlayer.currentPosition
-            }
-            if (bufferPosition != exoPlayer.bufferedPosition) {
-                bufferPosition = exoPlayer.bufferedPosition
-            }
+        with(exoPlayer) {
+            if (!isMedia()) return
+            during = duration.let { if (it == TIME_UNSET) 0 else it }
+            position = currentPosition
+            bufferPosition = bufferedPosition
         }
-
     }
 
     private fun ExoPlayer.isMedia(): Boolean {
-        return true
-//        return CartoonPlayingManager.exoPlayer.playbackState == Player.STATE_BUFFERING || CartoonPlayingManager.exoPlayer.playbackState == Player.STATE_READY
+        return playbackState == Player.STATE_BUFFERING || playbackState == Player.STATE_READY
+    }
+
+    fun isShowOverlay(): Boolean {
+        return when (controlState) {
+            ControlState.Normal -> isNormalLockedControlShow
+            ControlState.Locked -> false
+            ControlState.Ended -> false
+            else -> true
+        }
     }
 
 }
@@ -358,10 +342,12 @@ class ControlViewModelFactory(
     companion object {
         @Composable
         fun viewModel(exoPlayer: ExoPlayer): ControlViewModel {
-            return viewModel<ControlViewModel>(factory = ControlViewModelFactory(
-                LocalContext.current,
-                exoPlayer
-            ))
+            return viewModel<ControlViewModel>(
+                factory = ControlViewModelFactory(
+                    LocalContext.current,
+                    exoPlayer
+                )
+            )
         }
     }
 
@@ -372,4 +358,5 @@ class ControlViewModelFactory(
             return ControlViewModel(context, exoPlayer) as T
         throw RuntimeException("unknown class :" + modelClass.name)
     }
+
 }

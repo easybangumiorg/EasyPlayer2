@@ -11,7 +11,7 @@ import loli.ball.easyplayer2.utils.MeasureHelper
  * Created by HeYanLe on 2023/3/9 15:21.
  * https://github.com/heyanLE
  */
-class EasySurfaceView: SurfaceView {
+class EasySurfaceView : SurfaceView {
 
     private val measureHelper: MeasureHelper = MeasureHelper()
 
@@ -38,11 +38,8 @@ class EasySurfaceView: SurfaceView {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    )
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) :
+            super(context, attrs, defStyleAttr)
 
     constructor(
         context: Context?,
@@ -53,6 +50,10 @@ class EasySurfaceView: SurfaceView {
 
     init {
         holder.setFormat(PixelFormat.RGBA_8888)
-        layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
     }
+
 }

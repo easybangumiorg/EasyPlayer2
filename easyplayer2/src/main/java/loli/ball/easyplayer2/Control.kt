@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import loli.ball.easyplayer2.utils.TimeUtils
 
@@ -73,12 +72,10 @@ fun RowScope.PlayPauseBtn(
     isPlaying: Boolean,
     onClick: (Boolean) -> Unit,
 ) {
-    IconButton(onClick = {
-        onClick(!isPlaying)
-    }) {
-        val icon = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow
+    IconButton(onClick = { onClick(!isPlaying) }) {
         Icon(
-            icon,
+            if (isPlaying) Icons.Filled.Pause
+            else Icons.Filled.PlayArrow,
             tint = Color.White,
             contentDescription = null
         )
@@ -120,12 +117,10 @@ fun RowScope.FullScreenBtn(
     isFullScreen: Boolean,
     onClick: (Boolean) -> Unit,
 ) {
-    IconButton(onClick = {
-        onClick(!isFullScreen)
-    }) {
-        val icon = if (isFullScreen) Icons.Filled.FullscreenExit else Icons.Filled.Fullscreen
+    IconButton(onClick = { onClick(!isFullScreen) }) {
         Icon(
-            icon,
+            if (isFullScreen) Icons.Filled.FullscreenExit
+            else Icons.Filled.Fullscreen,
             tint = Color.White,
             contentDescription = null
         )
@@ -133,12 +128,8 @@ fun RowScope.FullScreenBtn(
 }
 
 @Composable
-fun RowScope.BackBtn(
-    onClick: () -> Unit,
-) {
-    IconButton(onClick = {
-        onClick()
-    }) {
+fun RowScope.BackBtn(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
         Icon(
             Icons.Filled.ArrowBack,
             tint = Color.White,
@@ -146,8 +137,3 @@ fun RowScope.BackBtn(
         )
     }
 }
-
-
-
-
-

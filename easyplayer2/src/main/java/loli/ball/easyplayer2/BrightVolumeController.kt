@@ -32,13 +32,17 @@ enum class DragType {
 }
 
 fun Modifier.brightVolume(
+    enable: Boolean,
     showUi: MutableState<DragType?>,
     onChange: ((type: DragType) -> Unit)? = null,
-): Modifier = brightVolume(
-    onShowUi = { showUi.value = it; onChange?.invoke(it) },
-    onHideUi = { showUi.value = null },
-    callback = { type, _ -> onChange?.invoke(type) }
-)
+): Modifier {
+    if(!enable) return this
+    return brightVolume(
+        onShowUi = { showUi.value = it; onChange?.invoke(it) },
+        onHideUi = { showUi.value = null },
+        callback = { type, _ -> onChange?.invoke(type) }
+    )
+}
 
 fun Modifier.brightVolume(
     onShowUi: ((type: DragType) -> Unit)? = null,
@@ -105,7 +109,6 @@ fun BrightVolumeUi(icon: ImageVector, contentDescription: String, percent: Int) 
                 modifier = Modifier.width(100.dp),
                 progress = percent / 100F
             )
-
         }
     }
 }

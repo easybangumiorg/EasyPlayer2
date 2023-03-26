@@ -6,6 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
@@ -71,4 +75,13 @@ fun OnLifecycleEvent(onEvent: (owner: LifecycleOwner, event: Lifecycle.Event) ->
             lifecycle.removeObserver(observer)
         }
     }
+}
+
+fun Modifier.pointerInput(
+    key1: Any?,
+    enable: Boolean,
+    block: suspend PointerInputScope.() -> Unit
+): Modifier = composed {
+    if (enable) pointerInput(key1, block)
+    else this
 }
