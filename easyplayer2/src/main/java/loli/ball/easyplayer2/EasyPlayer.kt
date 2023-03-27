@@ -149,167 +149,19 @@ fun EasyPlayer(
 
 }
 
-@Composable
-fun GestureController(
-    vm: ControlViewModel,
-    modifier: Modifier,
-    slideFullTime: Long = 300000,
-) {
-
-    val ctx = LocalContext.current as Activity
-    var viewSize by remember { mutableStateOf(IntSize.Zero) }
-
-    val showBrightVolumeUi = remember { mutableStateOf<DragType?>(null) }
-    var brightVolumeUiIcon by remember { mutableStateOf(Icons.Filled.LightMode) }
-    var brightVolumeUiText by remember { mutableStateOf(0) }
-
-    val enableGuest by remember {
-        derivedStateOf {
-            vm.isFullScreen && vm.controlState != ControlViewModel.ControlState.Locked
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(modifier)
-            .onSizeChanged { viewSize = it }
-            .pointerInput("单机双击", true) {
-                // 双击
-                detectTapGestures(
-                    onTap = {
-                        vm.onSingleClick()
-                    },
-                    onDoubleTap = {
-                        vm.onPlayPause(!vm.playWhenReady)
-                    }
-                )
-            }
-            .pointerInput("长按倍速", enableGuest) {
-                detectDragGesturesAfterLongPress(
-                    onDragStart = { vm.onLongPress() },
-                    onDragCancel = { vm.onActionUP() },
-                    onDragEnd = { vm.onActionUP() },
-                    onDrag = { _, _ -> }
-                )
-            }
-            .pointerInput("横向滑动", enableGuest) {
-                var horizontalOffset = 0F
-                var oldPosition = 0L
-                // 横向滑动
-                detectHorizontalDragGestures(
-                    onDragStart = {
-                        oldPosition = vm.position
-                        horizontalOffset = 0F
-                    },
-                    onDragCancel = { vm.onActionUP() },
-                    onDragEnd = { vm.onActionUP() },
-                    onHorizontalDrag = { _: PointerInputChange, dragAmount: Float ->
-                        horizontalOffset += dragAmount
-                        val percent = horizontalOffset / viewSize.width
-                        vm.onPositionChange(oldPosition + (slideFullTime * percent).toLong())
-                    },
-                )
-            }
-            .brightVolume(enableGuest, showBrightVolumeUi) { type -> // 音量、亮度
-                brightVolumeUiIcon = when (type) {
-                    DragType.BRIGHTNESS -> Icons.Filled.LightMode
-                    DragType.VOLUME -> Icons.Filled.VolumeUp
-                }
-                brightVolumeUiText = (when (type) {
-                    DragType.BRIGHTNESS -> ctx.windowBrightness
-                    DragType.VOLUME -> with(ctx) { systemVolume }
-                } * 100).toInt()
-            }
-    ) {
-
-        // 音量、亮度
-        AnimatedVisibility(
-            visible = showBrightVolumeUi.value != null,
-            modifier = Modifier.align(Alignment.Center),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            BrightVolumeUi(
-                brightVolumeUiIcon,
-                showBrightVolumeUi.value.toString(),
-                brightVolumeUiText
-            )
-        }
-
-        // 横向滑动
-        AnimatedVisibility(
-            visible = vm.controlState == ControlViewModel.ControlState.HorizontalScroll,
-            modifier = Modifier.align(Alignment.Center),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = TimeUtils.toString(vm.horizontalScrollPosition) + "/" +
-                            TimeUtils.toString(vm.during),
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-        }
 
 
-        // 长按倍速
-        AnimatedVisibility(
-            visible = vm.isLongPress,
-            modifier = Modifier.align(Alignment.TopCenter),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Box(
-                Modifier
-                    .padding(16.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .padding(8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        Icons.Filled.FastForward,
-                        null,
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center,
-                        text = ">>>",
-                        color = Color.White
-                    )
 
-                }
-            }
-        }
-
-
-    }
-}
 
 @Composable
 fun SimpleTopBar(
+    isShowOnNormalScreen: Boolean = false,
     vm: ControlViewModel,
     modifier: Modifier,
 ) {
     AnimatedVisibility(
         modifier = modifier,
-        visible = vm.isShowOverlay(),
+        visible = vm.isShowOverlay() && (vm.isFullScreen || isShowOnNormalScreen),
         exit = fadeOut(),
         enter = fadeIn(),
     ) {

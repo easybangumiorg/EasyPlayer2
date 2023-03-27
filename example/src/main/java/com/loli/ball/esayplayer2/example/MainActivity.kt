@@ -130,7 +130,7 @@ private fun Content(exo: ExoPlayer) {
             ) {
 
                 // 手势
-                GestureController(vm = it, modifier = Modifier.fillMaxSize())
+                SimpleGestureController(vm = it, modifier = Modifier.fillMaxSize(), longTouchText = "X2")
 
                 // 顶部工具栏
                 SimpleTopBar(
