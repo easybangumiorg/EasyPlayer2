@@ -1,6 +1,7 @@
 package loli.ball.easyplayer2.utils
 
 import android.view.View
+import kotlin.math.abs
 
 /**
  * Created by HeYanLe on 2022/10/23 15:35.
@@ -15,6 +16,7 @@ class MeasureHelper {
         const val SCREEN_SCALE_MATCH_PARENT = 3     // 拉伸
         const val SCREEN_SCALE_ORIGINAL = 4         // 平铺
         const val SCREEN_SCALE_CENTER_CROP = 5      // 平铺，从中心裁切，保证占满屏幕
+        const val SCREEN_SCALE_ADAPT = 6            // 保证长或宽与屏幕相等，比例不变
     }
 
     private var mVideoWidth = 0
@@ -56,44 +58,56 @@ class MeasureHelper {
         // mVideoWidth / width > mVideoHeight / height
         val widthScaleGtHeightScale = mVideoWidth * height > width * mVideoHeight
         when (mCurrentScreenScale) {
-            SCREEN_SCALE_DEFAULT ->
+            SCREEN_SCALE_DEFAULT -> {
                 if (widthScaleGtHeightScale) {
                     height = width * mVideoHeight / mVideoWidth
                 } else {
                     width = height * mVideoWidth / mVideoHeight
                 }
+            }
             SCREEN_SCALE_ORIGINAL -> {
                 width = mVideoWidth
                 height = mVideoHeight
             }
-            SCREEN_SCALE_16_9 ->
+            SCREEN_SCALE_16_9 -> {
                 if (height > width / 16 * 9) {
                     height = width / 16 * 9
                 } else {
                     width = height / 9 * 16
                 }
-            SCREEN_SCALE_4_3 ->
+            }
+            SCREEN_SCALE_4_3 -> {
                 if (height > width / 4 * 3) {
                     height = width / 4 * 3
                 } else {
                     width = height / 3 * 4
                 }
+            }
             SCREEN_SCALE_MATCH_PARENT -> {
                 width = widthMeasureSpec
                 height = heightMeasureSpec
             }
-            SCREEN_SCALE_CENTER_CROP ->
+            SCREEN_SCALE_CENTER_CROP -> {
                 if (widthScaleGtHeightScale) {
                     width = height * mVideoWidth / mVideoHeight
                 } else {
                     height = width * mVideoHeight / mVideoWidth
                 }
-            else ->
+            }
+            SCREEN_SCALE_ADAPT -> {
+                val wScale = width / mVideoWidth.toFloat()
+                val hScale = height / mVideoHeight.toFloat()
+                val scale = if (abs(wScale - 1) < abs(hScale - 1)) wScale else hScale
+                width = (scale * mVideoWidth).toInt()
+                height = (scale * mVideoHeight).toInt()
+            }
+            else -> {
                 if (widthScaleGtHeightScale) {
                     height = width * mVideoHeight / mVideoWidth
                 } else {
                     width = height * mVideoWidth / mVideoHeight
                 }
+            }
         }
         return intArrayOf(width, height)
     }

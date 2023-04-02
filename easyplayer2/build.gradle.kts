@@ -36,7 +36,7 @@ afterEvaluate {
             create("maven_public", MavenPublication::class) {
                 groupId = "loli.ball"
                 artifactId = "easyplayer2"
-                version = "1.0.0"
+                version = "1.0.0.test"
                 from(components.getByName("release"))
             }
         }
