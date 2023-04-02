@@ -8,13 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
@@ -23,13 +17,7 @@ import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,26 +47,11 @@ class GestureControllerScope(
 @Composable
 fun SimpleGestureController(
     vm: ControlViewModel,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     slideFullTime: Long = 300000,
+    longTouchText: String = "2x",
 ) {
-
-    GestureController(vm = vm, modifier = modifier, slideFullTime = slideFullTime) {
-        BrightVolumeUI()
-        SlideUI()
-        LongTouchUI()
-        LongTouchUI()
-    }
-}
-
-@Composable
-fun SimpleGestureController(
-    vm: ControlViewModel,
-    modifier: Modifier,
-    slideFullTime: Long = 300000,
-    longTouchText: String,
-) {
-    GestureController(vm = vm, modifier = modifier, slideFullTime = slideFullTime) {
+    GestureController(vm, modifier, slideFullTime) {
         BrightVolumeUI()
         SlideUI()
         LongTouchUI(longTouchText)
@@ -88,11 +61,10 @@ fun SimpleGestureController(
 @Composable
 fun GestureController(
     vm: ControlViewModel,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     slideFullTime: Long = 300000,
     content: @Composable GestureControllerScope.(ControlViewModel) -> Unit,
 ) {
-
     val ctx = LocalContext.current as Activity
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -158,16 +130,12 @@ fun GestureController(
             GestureControllerScope(this, vm, showBrightVolumeUi, brightVolumeUiText)
         }
         scope.content(vm)
-
-
     }
 }
 
 // 音量 亮度
 @Composable
 fun GestureControllerScope.BrightVolumeUI() {
-
-
     val brightVolumeUiIcon = remember(showBrightVolumeUi.value) {
         when (showBrightVolumeUi.value) {
             DragType.BRIGHTNESS -> Icons.Filled.LightMode
@@ -175,7 +143,6 @@ fun GestureControllerScope.BrightVolumeUI() {
             else -> Icons.Filled.VolumeUp
         }
     }
-
     // 音量、亮度
     AnimatedVisibility(
         visible = showBrightVolumeUi.value != null,
@@ -189,13 +156,10 @@ fun GestureControllerScope.BrightVolumeUI() {
             brightVolumePercent.value
         )
     }
-
-
 }
 
 @Composable
 fun GestureControllerScope.SlideUI() {
-
     // 横向滑动
     AnimatedVisibility(
         visible = vm.controlState == ControlViewModel.ControlState.HorizontalScroll,
@@ -222,46 +186,7 @@ fun GestureControllerScope.SlideUI() {
 }
 
 @Composable
-fun GestureControllerScope.LongTouchUI() {
-    // 长按倍速
-    AnimatedVisibility(
-        visible = vm.isLongPress,
-        modifier = Modifier.align(Alignment.TopCenter),
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Box(
-            Modifier
-                .padding(16.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color.Black.copy(alpha = 0.5f))
-                .padding(8.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    Icons.Filled.FastForward,
-                    null,
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    modifier = Modifier,
-                    textAlign = TextAlign.Center,
-                    text = ">>>",
-                    color = Color.White
-                )
-
-            }
-        }
-    }
-}
-
-@Composable
-fun GestureControllerScope.LongTouchUI(text: String) {
+fun GestureControllerScope.LongTouchUI(text: String = "2x") {
     // 长按倍速
     AnimatedVisibility(
         visible = vm.isLongPress,
@@ -293,7 +218,6 @@ fun GestureControllerScope.LongTouchUI(text: String) {
                     text = text,
                     color = Color.White
                 )
-
             }
         }
     }
