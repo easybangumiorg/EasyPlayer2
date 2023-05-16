@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.provider.Settings
 import android.view.OrientationEventListener
 import androidx.annotation.UiThread
 import androidx.compose.runtime.Composable
@@ -33,7 +34,8 @@ import loli.ball.easyplayer2.surface.EasySurfaceView
 class ControlViewModel(
     @field:SuppressLint("StaticFieldLeak")
     val context: Context,
-    val exoPlayer: ExoPlayer
+    val exoPlayer: ExoPlayer,
+    val isPadMode: Boolean = false,
 ) : ViewModel(), Player.Listener {
 
     companion object {
@@ -111,7 +113,12 @@ class ControlViewModel(
                     ctx.requestedOrientation =
                         if (reverse) ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 } else {
-                    ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    if(isPadMode){
+                        ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                    }else{
+                        ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    }
+
                 }
                 viewModelScope.launch {
                     fullScreenState = fullScreen to reverse
@@ -139,20 +146,27 @@ class ControlViewModel(
             if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && lastOrientation == 0) return
             //0度，用户竖直拿着手机
             lastOrientation = 0
-            onFullScreen(fullScreen = false, reverse = false, act)
+            if(!isPadMode && act.isAutoRotateOn()){
+                onFullScreen(fullScreen = false, reverse = false, act)
+            }
+
         } else if (orientation in 81..99) {
             val o: Int = act.requestedOrientation
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 90) return
             //90度，用户右侧横屏拿着手机
             lastOrientation = 90
-            onFullScreen(fullScreen = true, reverse = true, act)
+            if(!isPadMode && act.isAutoRotateOn()) {
+                onFullScreen(fullScreen = true, reverse = true, act)
+            }
         } else if (orientation in 261..279) {
             val o: Int = act.requestedOrientation
             //手动切换横竖屏
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 270) return
             //270度，用户左侧横屏拿着手机
             lastOrientation = 270
-            onFullScreen(fullScreen = true, reverse = false, act)
+            if(!isPadMode && act.isAutoRotateOn()) {
+                onFullScreen(fullScreen = true, reverse = false, act)
+            }
         }
     }
 
@@ -343,11 +357,21 @@ class ControlViewModel(
         }
     }
 
+    private fun Activity.isAutoRotateOn(): Boolean {
+        //获取系统是否允许自动旋转屏幕
+        return Settings.System.getInt(
+            contentResolver,
+            Settings.System.ACCELEROMETER_ROTATION,
+            0
+        ) == 1
+    }
+
 }
 
 class ControlViewModelFactory(
     private val context: Context,
-    private val exoPlayer: ExoPlayer
+    private val exoPlayer: ExoPlayer,
+    private val isPadMode: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     companion object {
@@ -366,7 +390,7 @@ class ControlViewModelFactory(
     @SuppressWarnings("unchecked")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ControlViewModel::class.java))
-            return ControlViewModel(context, exoPlayer) as T
+            return ControlViewModel(context, exoPlayer, isPadMode) as T
         throw RuntimeException("unknown class :" + modelClass.name)
     }
 

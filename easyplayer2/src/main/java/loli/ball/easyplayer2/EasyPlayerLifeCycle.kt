@@ -26,22 +26,23 @@ fun EasyPlayerStateSync(vm: ControlViewModel) {
 
     DisposableEffect(Unit) {
         vm.onLaunch()
+        val old = ctx.requestedOrientation
         onDispose {
             vm.onDisposed()
-            ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            ctx.requestedOrientation = old
         }
     }
 
     LaunchedEffect(vm.fullScreenState) {
         if (vm.isFullScreen) {
-            ctx.requestedOrientation =
-                if (vm.isReverse) ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+//            ctx.requestedOrientation =
+//                if (vm.isReverse) ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+//                else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             ui.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             ui.isSystemBarsVisible = false
         } else {
-            ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//            ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             ui.isSystemBarsVisible = true
         }
     }
