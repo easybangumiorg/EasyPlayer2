@@ -376,11 +376,12 @@ class ControlViewModelFactory(
 
     companion object {
         @Composable
-        fun viewModel(exoPlayer: ExoPlayer): ControlViewModel {
+        fun viewModel(exoPlayer: ExoPlayer, isPadMode: Boolean): ControlViewModel {
             return viewModel<ControlViewModel>(
                 factory = ControlViewModelFactory(
                     LocalContext.current,
-                    exoPlayer
+                    exoPlayer,
+                    isPadMode = isPadMode
                 )
             )
         }
