@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.view.OrientationEventListener
 import androidx.annotation.UiThread
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -75,6 +76,11 @@ class ControlViewModel(
 
     var isLongPress by mutableStateOf(false)
     var lastSpeed = 1.0f
+
+    // 设置的倍速，不一定是真正的播放速度
+    // 可以用于倍速控制器显示
+    private var _curSpeed by mutableStateOf(1.0f)
+    val curSpeed = _curSpeed
 
     private var lastHideJob: Job? = null
     private var loopJob: Job? = null
@@ -219,6 +225,11 @@ class ControlViewModel(
         exoPlayer.setPlaybackSpeed(1.0f)
         lastSpeed = 1.0f
         isLongPress = false
+    }
+
+    fun setSpeed(speed: Float){
+        exoPlayer.playbackParameters = exoPlayer.playbackParameters.withSpeed(speed)
+        _curSpeed = exoPlayer.playbackParameters.speed
     }
 
     fun onDisposed() {
