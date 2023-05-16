@@ -16,26 +16,48 @@ import androidx.compose.ui.viewinterop.AndroidView
 fun EasyPlayerScaffold(
     vm: ControlViewModel,
     modifier: Modifier = Modifier,
+    isPadMode: Boolean = false,
     videoFloat: (@Composable (ControlViewModel) -> Unit)? = null,
     control: (@Composable (ControlViewModel) -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     EasyPlayerStateSync(vm)
-    Column(modifier) {
-        EasyPlayer(
-            modifier = Modifier.fillMaxWidth(),
-            vm = vm,
-            control = control,
-            videoFloat = videoFloat
-        )
-        this@Column.content()
+    if(isPadMode){
+        Row {
+            EasyPlayer(
+                modifier = Modifier.weight(1f),
+                vm = vm,
+                control = control,
+                isPadMode = isPadMode,
+                videoFloat = videoFloat
+            )
+            Column (
+                modifier = Modifier.weight(1f),
+            ){
+                this.content()
+            }
+
+        }
+    }else{
+        Column(modifier) {
+            EasyPlayer(
+                modifier = Modifier.fillMaxWidth(),
+                vm = vm,
+                control = control,
+                isPadMode = isPadMode,
+                videoFloat = videoFloat
+            )
+            this@Column.content()
+        }
     }
+
 }
 
 @Composable
 fun EasyPlayer(
     vm: ControlViewModel,
     modifier: Modifier = Modifier,
+    isPadMode: Boolean = false,
     control: (@Composable (ControlViewModel) -> Unit)? = null,
     videoFloat: (@Composable (ControlViewModel) -> Unit)? = null,
 ) {
@@ -52,10 +74,13 @@ fun EasyPlayer(
             val surModifier = remember(vm.isFullScreen) {
                 if (vm.isFullScreen) {
                     Modifier.fillMaxSize()
-                } else {
+                } else if(!isPadMode){
                     Modifier
                         .fillMaxWidth()
                         .aspectRatio(ControlViewModel.ratioWidth / ControlViewModel.ratioHeight)
+                }else{
+                    Modifier
+                        .fillMaxSize()
                 }
             }
             Box(modifier = surModifier, contentAlignment = Alignment.Center) {
