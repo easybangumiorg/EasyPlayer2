@@ -53,6 +53,56 @@ fun EasyPlayerScaffold(
 
 }
 
+// content 是 Box，不是 Column
+@Composable
+fun EasyPlayerScaffoldBase(
+    vm: ControlViewModel,
+    modifier: Modifier = Modifier,
+    isPadMode: Boolean = false,
+    videoFloat: (@Composable (ControlViewModel) -> Unit)? = null,
+    control: (@Composable (ControlViewModel) -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    EasyPlayerStateSync(vm)
+    if(isPadMode){
+        Row {
+            EasyPlayer(
+                modifier = Modifier.weight(1f),
+                vm = vm,
+                control = control,
+                isPadMode = isPadMode,
+                videoFloat = videoFloat
+            )
+            if(!vm.isFullScreen){
+                Box (
+                    modifier = Modifier.weight(1f),
+                ){
+                    this.content()
+                }
+            }
+
+
+        }
+    }else{
+        Column(modifier) {
+            EasyPlayer(
+                modifier = Modifier.fillMaxWidth(),
+                vm = vm,
+                control = control,
+                isPadMode = isPadMode,
+                videoFloat = videoFloat
+            )
+            if(!vm.isFullScreen) {
+                Box() {
+                    this.content()
+                }
+            }
+
+        }
+    }
+
+}
+
 @Composable
 fun EasyPlayer(
     vm: ControlViewModel,
