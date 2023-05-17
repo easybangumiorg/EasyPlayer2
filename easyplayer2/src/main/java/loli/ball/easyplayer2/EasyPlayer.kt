@@ -16,39 +16,20 @@ import androidx.compose.ui.viewinterop.AndroidView
 fun EasyPlayerScaffold(
     vm: ControlViewModel,
     modifier: Modifier = Modifier,
-    isPadMode: Boolean = false,
     videoFloat: (@Composable (ControlViewModel) -> Unit)? = null,
     control: (@Composable (ControlViewModel) -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     EasyPlayerStateSync(vm)
-    if(isPadMode){
-        Row {
-            EasyPlayer(
-                modifier = Modifier.weight(1f),
-                vm = vm,
-                control = control,
-                isPadMode = isPadMode,
-                videoFloat = videoFloat
-            )
-            Column (
-                modifier = Modifier.weight(1f),
-            ){
-                this.content()
-            }
-
-        }
-    }else{
-        Column(modifier) {
-            EasyPlayer(
-                modifier = Modifier.fillMaxWidth(),
-                vm = vm,
-                control = control,
-                isPadMode = isPadMode,
-                videoFloat = videoFloat
-            )
-            this@Column.content()
-        }
+    Column(modifier) {
+        EasyPlayer(
+            modifier = Modifier.fillMaxWidth(),
+            vm = vm,
+            control = control,
+            isPadMode = false,
+            videoFloat = videoFloat
+        )
+        this@Column.content()
     }
 
 }
@@ -59,6 +40,7 @@ fun EasyPlayerScaffoldBase(
     vm: ControlViewModel,
     modifier: Modifier = Modifier,
     isPadMode: Boolean = false,
+    contentWeight: Float = 1f,
     videoFloat: (@Composable (ControlViewModel) -> Unit)? = null,
     control: (@Composable (ControlViewModel) -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
@@ -75,7 +57,7 @@ fun EasyPlayerScaffoldBase(
             )
             if(!vm.isFullScreen){
                 Box (
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(contentWeight),
                 ){
                     this.content()
                 }
