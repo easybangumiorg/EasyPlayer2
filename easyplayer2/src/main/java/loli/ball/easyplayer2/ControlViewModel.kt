@@ -92,6 +92,8 @@ class ControlViewModel(
     @SuppressLint("StaticFieldLeak")
     val surfaceView = EasySurfaceView(context)
 
+    var fullScreenVertically = false
+
     fun onLockedChange(locked: Boolean) {
         viewModelScope.launch {
             if (locked) {
@@ -111,14 +113,19 @@ class ControlViewModel(
             if (oldFullScreen != fullScreen || oldReverse != reverse) {
                 if (fullScreen) {
                     ctx.requestedOrientation =
-                        if (reverse) ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                        if (fullScreenVertically) {
+                            if (reverse) ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+                            else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        } else {
+                            if (reverse) ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                            else ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                        }
                 } else {
-                    if(isPadMode){
+                    if (isPadMode) {
                         ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                    }else{
+                    } else {
                         ctx.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                     }
-
                 }
                 viewModelScope.launch {
                     fullScreenState = fullScreen to reverse
@@ -146,7 +153,7 @@ class ControlViewModel(
             if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && lastOrientation == 0) return
             //0度，用户竖直拿着手机
             lastOrientation = 0
-            if(!isPadMode && act.isAutoRotateOn()){
+            if (!isPadMode && act.isAutoRotateOn()) {
                 onFullScreen(fullScreen = false, reverse = false, act)
             }
 
@@ -155,7 +162,7 @@ class ControlViewModel(
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 90) return
             //90度，用户右侧横屏拿着手机
             lastOrientation = 90
-            if(!isPadMode && act.isAutoRotateOn()) {
+            if (!isPadMode && act.isAutoRotateOn()) {
                 onFullScreen(fullScreen = true, reverse = true, act)
             }
         } else if (orientation in 261..279) {
@@ -164,7 +171,7 @@ class ControlViewModel(
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 270) return
             //270度，用户左侧横屏拿着手机
             lastOrientation = 270
-            if(!isPadMode && act.isAutoRotateOn()) {
+            if (!isPadMode && act.isAutoRotateOn()) {
                 onFullScreen(fullScreen = true, reverse = false, act)
             }
         }
@@ -241,7 +248,7 @@ class ControlViewModel(
         isLongPress = false
     }
 
-    fun setSpeed(speed: Float){
+    fun setSpeed(speed: Float) {
         exoPlayer.playbackParameters = exoPlayer.playbackParameters.withSpeed(speed)
         _curSpeed = exoPlayer.playbackParameters.speed
     }
@@ -309,15 +316,18 @@ class ControlViewModel(
                 syncTimeIfNeed()
                 starLoop()
             }
+
             Player.STATE_IDLE -> {
                 isLoading = false
                 stopLoop()
             }
+
             Player.STATE_BUFFERING -> {
                 isLoading = true
                 syncTimeIfNeed()
                 starLoop()
             }
+
             Player.STATE_ENDED -> {
                 isLoading = false
                 stopLoop()
@@ -333,6 +343,7 @@ class ControlViewModel(
     override fun onVideoSizeChanged(videoSize: VideoSize) {
         super.onVideoSizeChanged(videoSize)
         surfaceView.setVideoSize(videoSize.width, videoSize.height)
+        fullScreenVertically = videoSize.width < videoSize.height
     }
 
     private fun syncTimeIfNeed() {
