@@ -1,10 +1,15 @@
 package loli.ball.easyplayer2
 
+import android.widget.ImageButton
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Fullscreen
@@ -18,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -53,11 +59,13 @@ fun BottomControl(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(40.dp)
             .background(
                 brush = Brush.verticalGradient(
                     listOf(Color.Transparent, Color.Black)
                 )
-            ),
+            )
+            .padding(4.dp, 0.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
         content = content
@@ -72,14 +80,19 @@ fun RowScope.PlayPauseBtn(
     isPlaying: Boolean,
     onClick: (Boolean) -> Unit,
 ) {
-    IconButton(onClick = { onClick(!isPlaying) }) {
-        Icon(
-            if (isPlaying) Icons.Filled.Pause
-            else Icons.Filled.PlayArrow,
-            tint = Color.White,
-            contentDescription = null
-        )
-    }
+    Icon(
+        if (isPlaying) Icons.Filled.Pause
+        else Icons.Filled.PlayArrow,
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable {
+                onClick(!isPlaying)
+            }
+            .padding(4.dp)
+            ,
+        tint = Color.White,
+        contentDescription = null
+    )
 }
 
 /**
@@ -90,7 +103,13 @@ fun RowScope.TimeText(
     time: Long,
     color: Color = Color.Unspecified,
 ) {
-    Text(text = TimeUtils.toString(time), color = color)
+    Text(
+        modifier = Modifier
+            .padding(4.dp, 0.dp)
+            .align(Alignment.CenterVertically),
+        text = TimeUtils.toString(time),
+        color = color
+    )
 }
 
 
@@ -102,7 +121,9 @@ fun RowScope.TimeSlider(
     onValueChangeFinish: () -> Unit,
 ) {
     Slider(
-        modifier = Modifier.weight(1f),
+        modifier = Modifier
+            .weight(1f)
+            .padding(4.dp, 0.dp),
         value = position.toFloat(),
         onValueChange = {
             onValueChange(it.toLong())
@@ -117,14 +138,18 @@ fun RowScope.FullScreenBtn(
     isFullScreen: Boolean,
     onClick: (Boolean) -> Unit,
 ) {
-    IconButton(onClick = { onClick(!isFullScreen) }) {
-        Icon(
-            if (isFullScreen) Icons.Filled.FullscreenExit
-            else Icons.Filled.Fullscreen,
-            tint = Color.White,
-            contentDescription = null
-        )
-    }
+    Icon(
+        if (isFullScreen) Icons.Filled.FullscreenExit
+        else Icons.Filled.Fullscreen,
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable {
+                onClick(!isFullScreen)
+            }
+            .padding(4.dp),
+        tint = Color.White,
+        contentDescription = null
+    )
 }
 
 @Composable
