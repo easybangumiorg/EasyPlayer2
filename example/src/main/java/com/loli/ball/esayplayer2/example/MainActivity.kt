@@ -162,10 +162,13 @@ private fun Content(exo: ExoPlayer) {
                 .background(MaterialTheme.colorScheme.surface)
         ) {
 
-            repeat(10) {
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = it.toString())
-                }
+
+
+            Button(onClick = { controlVM.setSpeed(1.0f) }) {
+                Text(text = "1.0")
+            }
+            Button(onClick = { controlVM.setSpeed(2.0f) }) {
+                Text(text = "2.0")
             }
         }
 

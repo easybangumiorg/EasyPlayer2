@@ -26,6 +26,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import loli.ball.easyplayer2.surface.EasySurfaceView
+import loli.ball.easyplayer2.utils.loge
 
 /**
  * Created by HeYanLe on 2023/3/8 22:45.
@@ -81,8 +82,7 @@ class ControlViewModel(
 
     // 设置的倍速，不一定是真正的播放速度
     // 可以用于倍速控制器显示
-    private var _curSpeed by mutableStateOf(1.0f)
-    val curSpeed = _curSpeed
+    var curSpeed by mutableStateOf(1.0f)
 
     private var lastHideJob: Job? = null
     private var loopJob: Job? = null
@@ -250,7 +250,8 @@ class ControlViewModel(
 
     fun setSpeed(speed: Float) {
         exoPlayer.playbackParameters = exoPlayer.playbackParameters.withSpeed(speed)
-        _curSpeed = exoPlayer.playbackParameters.speed
+        curSpeed = exoPlayer.playbackParameters.speed
+        exoPlayer.playbackParameters.speed.loge("ControlViewModel")
     }
 
     fun onDisposed() {
