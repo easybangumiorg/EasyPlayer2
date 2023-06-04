@@ -47,7 +47,7 @@ fun EasyPlayerScaffoldBase(
     content: @Composable BoxScope.() -> Unit,
 ) {
     EasyPlayerStateSync(vm)
-    if(isPadMode){
+    if (isPadMode) {
         Row {
             EasyPlayer(
                 modifier = Modifier.weight(1f),
@@ -56,17 +56,15 @@ fun EasyPlayerScaffoldBase(
                 isPadMode = isPadMode,
                 videoFloat = videoFloat
             )
-            if(!vm.isFullScreen){
-                Box (
+            if (!vm.isFullScreen) {
+                Box(
                     modifier = Modifier.weight(contentWeight),
-                ){
+                ) {
                     this.content()
                 }
             }
-
-
         }
-    }else{
+    } else {
         Column(modifier) {
             EasyPlayer(
                 modifier = Modifier.fillMaxWidth(),
@@ -75,15 +73,13 @@ fun EasyPlayerScaffoldBase(
                 isPadMode = isPadMode,
                 videoFloat = videoFloat
             )
-            if(!vm.isFullScreen) {
-                Box() {
+            if (!vm.isFullScreen) {
+                Box {
                     this.content()
                 }
             }
-
         }
     }
-
 }
 
 @Composable
@@ -107,13 +103,12 @@ fun EasyPlayer(
             val surModifier = remember(vm.isFullScreen) {
                 if (vm.isFullScreen) {
                     Modifier.fillMaxSize()
-                } else if(!isPadMode){
+                } else if (!isPadMode) {
                     Modifier
                         .fillMaxWidth()
                         .aspectRatio(ControlViewModel.ratioWidth / ControlViewModel.ratioHeight)
-                }else{
-                    Modifier
-                        .fillMaxSize()
+                } else {
+                    Modifier.fillMaxSize()
                 }
             }
             Box(modifier = surModifier, contentAlignment = Alignment.Center) {
