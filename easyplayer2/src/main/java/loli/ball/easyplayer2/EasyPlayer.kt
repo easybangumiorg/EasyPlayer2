@@ -1,5 +1,6 @@
 package loli.ball.easyplayer2
 
+import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -116,9 +117,33 @@ fun EasyPlayer(
                 }
             }
             Box(modifier = surModifier, contentAlignment = Alignment.Center) {
+//                DisposableEffect(key1 = Unit ){
+//                    kotlin.runCatching {
+//                        (vm.surfaceView.parent as ViewGroup).removeView(vm.surfaceView)
+//                    }.onFailure {
+//                        it.printStackTrace()
+//                    }
+//
+//                    onDispose {
+//                        kotlin.runCatching {
+//                            (vm.surfaceView.parent as ViewGroup).removeView(vm.surfaceView)
+//                        }.onFailure {
+//                            it.printStackTrace()
+//                        }
+//                    }
+//                }
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
-                    factory = { vm.surfaceView }
+                    factory = {
+                        vm.surfaceView.apply {
+                            kotlin.runCatching {
+                                (parent as ViewGroup).removeView(this)
+                            }.onFailure {
+                                it.printStackTrace()
+                            }
+
+                        }
+                    }
                 )
             }
         },
