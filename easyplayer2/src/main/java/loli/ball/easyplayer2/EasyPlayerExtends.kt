@@ -53,6 +53,7 @@ fun SimpleTopBar(
 fun SimpleBottomBar(
     vm: ControlViewModel,
     modifier: Modifier = Modifier,
+    contentModifier: Modifier = Modifier,
     otherAction: (@Composable RowScope.(ControlViewModel) -> Unit)? = null,
 ) {
     AnimatedVisibility(
@@ -61,36 +62,38 @@ fun SimpleBottomBar(
         exit = fadeOut(),
         enter = fadeIn(),
     ) {
-        BottomControl {
-            PlayPauseBtn(isPlaying = vm.playWhenReady, onClick = {
-                vm.onPlayPause(it)
-            })
-            TimeText(time = vm.position, Color.White)
+        Box(modifier = contentModifier){
+            BottomControl {
+                PlayPauseBtn(isPlaying = vm.playWhenReady, onClick = {
+                    vm.onPlayPause(it)
+                })
+                TimeText(time = vm.position, Color.White)
 
-            val position =
-                if (vm.controlState == ControlViewModel.ControlState.Normal) vm.position
-                else if (vm.controlState == ControlViewModel.ControlState.HorizontalScroll) vm.horizontalScrollPosition
-                else 0
+                val position =
+                    if (vm.controlState == ControlViewModel.ControlState.Normal) vm.position
+                    else if (vm.controlState == ControlViewModel.ControlState.HorizontalScroll) vm.horizontalScrollPosition
+                    else 0
 
-            TimeSlider(
-                during = vm.during,
-                position = position,
-                onValueChange = {
-                    vm.onPositionChange(it)
-                },
-                onValueChangeFinish = {
-                    vm.onActionUP()
-                }
-            )
+                TimeSlider(
+                    during = vm.during,
+                    position = position,
+                    onValueChange = {
+                        vm.onPositionChange(it)
+                    },
+                    onValueChangeFinish = {
+                        vm.onActionUP()
+                    }
+                )
 
-            TimeText(time = vm.during, Color.White)
+                TimeText(time = vm.during, Color.White)
 
-            otherAction?.invoke(this, vm)
+                otherAction?.invoke(this, vm)
 
-            val ctx = LocalContext.current as Activity
-            FullScreenBtn(isFullScreen = vm.isFullScreen, onClick = {
-                vm.onFullScreen(it, ctx = ctx)
-            })
+                val ctx = LocalContext.current as Activity
+                FullScreenBtn(isFullScreen = vm.isFullScreen, onClick = {
+                    vm.onFullScreen(it, ctx = ctx)
+                })
+            }
         }
     }
 
