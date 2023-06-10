@@ -4,6 +4,7 @@ import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,18 +55,19 @@ fun TopControl(
 
 @Composable
 fun BottomControl(
+    padding: PaddingValues = PaddingValues(0.dp),
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(40.dp)
             .background(
                 brush = Brush.verticalGradient(
                     listOf(Color.Transparent, Color.Black)
                 )
             )
-            .padding(4.dp, 0.dp),
+            .padding(padding)
+            .height(40.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
         content = content
