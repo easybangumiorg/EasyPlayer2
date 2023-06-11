@@ -132,7 +132,7 @@ fun EasyPlayer(
                     factory = {
                         vm.surfaceView.apply {
                             kotlin.runCatching {
-                                (parent as ViewGroup).removeView(this)
+                                (parent as? ViewGroup)?.removeView(this)
                             }.onFailure {
                                 it.printStackTrace()
                             }

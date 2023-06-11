@@ -332,6 +332,7 @@ class ControlViewModel(
             Player.STATE_ENDED -> {
                 isLoading = false
                 stopLoop()
+                controlState = ControlState.Ended
             }
         }
     }
