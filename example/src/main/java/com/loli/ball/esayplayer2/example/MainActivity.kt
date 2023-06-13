@@ -135,11 +135,9 @@ private fun Content(exo: ExoPlayer) {
                 SimpleGestureController(vm = it, modifier = Modifier.fillMaxSize(), longTouchText = "X2")
 
                 // 顶部工具栏
-                SimpleTopBar(
-                    vm = it,
+                ElectricityTopBar(vm = it,
                     modifier = Modifier
-                        .align(Alignment.TopCenter)
-                )
+                        .align(Alignment.TopCenter))
 
                 // 底部工具栏
                 SimpleBottomBar(

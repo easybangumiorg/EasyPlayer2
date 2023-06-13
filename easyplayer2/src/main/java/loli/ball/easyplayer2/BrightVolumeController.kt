@@ -33,13 +33,14 @@ enum class DragType {
 
 fun Modifier.brightVolume(
     enable: Boolean,
-    showUi: MutableState<DragType?>,
+    showUi: MutableState<Boolean>,
+    type: MutableState<DragType>,
     onChange: ((type: DragType) -> Unit)? = null,
 ): Modifier {
     if(!enable) return this
     return brightVolume(
-        onShowUi = { showUi.value = it; onChange?.invoke(it) },
-        onHideUi = { showUi.value = null },
+        onShowUi = { type.value = it; showUi.value = true; onChange?.invoke(it) },
+        onHideUi = { showUi.value = false },
         callback = { type, _ -> onChange?.invoke(type) }
     )
 }

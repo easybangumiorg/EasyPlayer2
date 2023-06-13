@@ -40,8 +40,9 @@ import loli.ball.easyplayer2.utils.windowBrightness
 class GestureControllerScope(
     boxScope: BoxScope,
     val vm: ControlViewModel,
-    val showBrightVolumeUi: MutableState<DragType?> = mutableStateOf<DragType?>(null),
-    val brightVolumePercent: MutableState<Int> = mutableStateOf(0)
+    val showBrightVolumeUi: MutableState<Boolean> = mutableStateOf(false),
+    val brightVolumeType: MutableState<DragType> = mutableStateOf(DragType.VOLUME),
+    val brightVolumePercent: MutableState<Int> = mutableStateOf(0),
 ) : BoxScope by boxScope
 
 @Composable
@@ -68,7 +69,11 @@ fun GestureController(
     val ctx = LocalContext.current as Activity
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
 
-    val showBrightVolumeUi = remember { mutableStateOf<DragType?>(null) }
+
+    val showBrightVolumeUi = remember { mutableStateOf<Boolean>(false) }
+    val brightVolumeTYpe = remember {
+        mutableStateOf<DragType>(DragType.VOLUME)
+    }
     val brightVolumeUiText = remember { mutableStateOf(0) }
 
     val enableGuest by remember {
@@ -119,7 +124,8 @@ fun GestureController(
                     },
                 )
             }
-            .brightVolume(enableGuest, showBrightVolumeUi) { type -> // 音量、亮度
+            .brightVolume(enableGuest, showBrightVolumeUi, brightVolumeTYpe) { type -> // 音量、亮度
+
                 brightVolumeUiText.value = (when (type) {
                     DragType.BRIGHTNESS -> ctx.windowBrightness
                     DragType.VOLUME -> with(ctx) { systemVolume }
@@ -127,7 +133,7 @@ fun GestureController(
             }
     ) {
         val scope = remember(this, vm) {
-            GestureControllerScope(this, vm, showBrightVolumeUi, brightVolumeUiText)
+            GestureControllerScope(this, vm, showBrightVolumeUi, brightVolumeTYpe,brightVolumeUiText)
         }
         scope.content(vm)
     }
@@ -137,25 +143,26 @@ fun GestureController(
 @Composable
 fun GestureControllerScope.BrightVolumeUI() {
     val brightVolumeUiIcon = remember(showBrightVolumeUi.value) {
-        when (showBrightVolumeUi.value) {
+        when (brightVolumeType.value) {
             DragType.BRIGHTNESS -> Icons.Filled.LightMode
             DragType.VOLUME -> Icons.Filled.VolumeUp
             else -> Icons.Filled.VolumeUp
         }
     }
-    // 音量、亮度
     AnimatedVisibility(
-        visible = showBrightVolumeUi.value != null,
+        visible = showBrightVolumeUi.value,
         modifier = Modifier.align(Alignment.Center),
         enter = fadeIn(),
         exit = fadeOut()
     ) {
         BrightVolumeUi(
             brightVolumeUiIcon,
-            showBrightVolumeUi.value.toString(),
-            brightVolumePercent.value
+            this@BrightVolumeUI.showBrightVolumeUi.value.toString(),
+            this@BrightVolumeUI.brightVolumePercent.value
         )
     }
+
+
 }
 
 @Composable
