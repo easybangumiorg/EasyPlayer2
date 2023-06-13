@@ -316,11 +316,18 @@ class ControlViewModel(
                 isLoading = false
                 syncTimeIfNeed()
                 starLoop()
+                if(controlState == ControlState.Ended){
+                    controlState = ControlState.Normal
+                }
+
             }
 
             Player.STATE_IDLE -> {
                 isLoading = false
                 stopLoop()
+                if(controlState == ControlState.Ended){
+                    controlState = ControlState.Normal
+                }
             }
 
             Player.STATE_BUFFERING -> {
