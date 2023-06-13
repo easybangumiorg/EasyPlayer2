@@ -69,7 +69,7 @@ fun SimpleTopBar(
             BackBtn {
                 vm.onFullScreen(false, ctx = ctx)
             }
-            Text(text = vm.title)
+            Text(text = vm.title, color = Color.White)
         }
     }
 }
@@ -91,7 +91,7 @@ fun ElectricityTopBar(
             BackBtn {
                 vm.onFullScreen(false, ctx = ctx)
             }
-            Text(text = vm.title)
+            Text(text = vm.title, color = Color.White)
 
             Spacer(modifier = Modifier.weight(1f))
 
