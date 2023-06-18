@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -50,10 +48,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
 
-    implementation("com.google.android.exoplayer:exoplayer:2.18.5")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.7")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
 
-    val composeMaterialVersion = "1.4.0"
+    val composeMaterialVersion = "1.4.3"
     implementation("androidx.compose.material:material:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-core:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
@@ -61,8 +59,8 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.activity:activity-compose:1.7.0")
-    implementation("androidx.compose.material3:material3:1.1.0-beta01")
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha02")
 
 }
