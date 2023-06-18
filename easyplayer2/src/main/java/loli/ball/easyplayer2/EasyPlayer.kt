@@ -48,7 +48,7 @@ fun EasyPlayerScaffoldBase(
 ) {
     EasyPlayerStateSync(vm)
     if (isPadMode) {
-        Row {
+        Row(modifier) {
             EasyPlayer(
                 modifier = Modifier.weight(1f),
                 vm = vm,
