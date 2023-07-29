@@ -344,6 +344,13 @@ class ControlViewModel(
         }
     }
 
+    override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
+        super.onAvailableCommandsChanged(availableCommands)
+        if(availableCommands.contains(Player.COMMAND_PREPARE)){
+            onPrepare()
+        }
+    }
+
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
         super.onPlayWhenReadyChanged(playWhenReady, reason)
         this.playWhenReady = playWhenReady
