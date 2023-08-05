@@ -52,6 +52,7 @@ fun EasyPlayerStateSync(vm: ControlViewModel) {
         vm.onOrientation(orientation, act = ctx)
     }
 
+
     OnLifecycleEvent { _, event ->
         when (event) {
             Lifecycle.Event.ON_RESUME -> ui.isSystemBarsVisible = !vm.isFullScreen

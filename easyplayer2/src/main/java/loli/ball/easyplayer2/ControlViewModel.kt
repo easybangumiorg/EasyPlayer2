@@ -53,6 +53,13 @@ class ControlViewModel(
         Normal, Locked, HorizontalScroll, Ended
     }
 
+    // 是否根据传感器自动全屏
+    enum class OrientationEnableMode {
+        AUTO, ENABLE, DISABLE,
+    }
+
+    var orientationEnableMode = OrientationEnableMode.AUTO
+
     var controlState by mutableStateOf(ControlState.Normal)
 
     var isNormalLockedControlShow by mutableStateOf(true)
@@ -153,6 +160,12 @@ class ControlViewModel(
             if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && lastOrientation == 0) return
             //0度，用户竖直拿着手机
             lastOrientation = 0
+            if (
+                (orientationEnableMode == OrientationEnableMode.AUTO && !act.isAutoRotateOn()) ||
+                orientationEnableMode == OrientationEnableMode.DISABLE
+            ) {
+                return
+            }
             if (!isPadMode && act.isAutoRotateOn()) {
                 onFullScreen(fullScreen = false, reverse = false, act)
             }
@@ -162,6 +175,12 @@ class ControlViewModel(
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 90) return
             //90度，用户右侧横屏拿着手机
             lastOrientation = 90
+            if (
+                (orientationEnableMode == OrientationEnableMode.AUTO && !act.isAutoRotateOn()) ||
+                orientationEnableMode == OrientationEnableMode.DISABLE
+            ) {
+                return
+            }
             if (!isPadMode && act.isAutoRotateOn()) {
                 onFullScreen(fullScreen = true, reverse = true, act)
             }
@@ -171,6 +190,12 @@ class ControlViewModel(
             if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 270) return
             //270度，用户左侧横屏拿着手机
             lastOrientation = 270
+            if (
+                (orientationEnableMode == OrientationEnableMode.AUTO && !act.isAutoRotateOn()) ||
+                orientationEnableMode == OrientationEnableMode.DISABLE
+            ) {
+                return
+            }
             if (!isPadMode && act.isAutoRotateOn()) {
                 onFullScreen(fullScreen = true, reverse = false, act)
             }
@@ -316,7 +341,7 @@ class ControlViewModel(
                 isLoading = false
                 syncTimeIfNeed()
                 starLoop()
-                if(controlState == ControlState.Ended){
+                if (controlState == ControlState.Ended) {
                     controlState = ControlState.Normal
                 }
 
@@ -325,7 +350,7 @@ class ControlViewModel(
             Player.STATE_IDLE -> {
                 isLoading = false
                 stopLoop()
-                if(controlState == ControlState.Ended){
+                if (controlState == ControlState.Ended) {
                     controlState = ControlState.Normal
                 }
             }
@@ -346,7 +371,7 @@ class ControlViewModel(
 
     override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
         super.onAvailableCommandsChanged(availableCommands)
-        if(availableCommands.contains(Player.COMMAND_PREPARE)){
+        if (availableCommands.contains(Player.COMMAND_PREPARE)) {
             onPrepare()
         }
     }
