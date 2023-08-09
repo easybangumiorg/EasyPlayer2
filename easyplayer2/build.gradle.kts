@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "loli.ball.easyplayer2"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
@@ -48,19 +48,26 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
 
-    implementation("com.google.android.exoplayer:exoplayer:2.18.7")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
+    //implementation("com.google.android.exoplayer:exoplayer:2.18.7")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20")
 
     val composeMaterialVersion = "1.4.3"
     implementation("androidx.compose.material:material:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-core:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
 
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.0")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha02")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha04")
+
+    val media3 = "1.1.0"
+    api ("androidx.media3:media3-exoplayer:${media3}")
+    api ("androidx.media3:media3-exoplayer-dash:${media3}")
+    api ("androidx.media3:media3-ui:${media3}")
+    api("androidx.media3:media3-exoplayer-hls:${media3}")
+
 
 }

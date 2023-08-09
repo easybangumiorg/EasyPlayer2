@@ -17,10 +17,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.exoplayer2.C.TIME_UNSET
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.video.VideoSize
+import androidx.media3.common.C.TIME_UNSET
+import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -113,6 +113,7 @@ class ControlViewModel(
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     fun onFullScreen(fullScreen: Boolean, reverse: Boolean = false, ctx: Activity) {
         viewModelScope.launch {
             val oldFullScreen = isFullScreen

@@ -17,6 +17,7 @@ Step 2. Add the dependency
 
 	dependencies {
 	        implementation 'com.github.easybangumiorg:EasyPlayer2:1.0.3'
+
 	}
 
 

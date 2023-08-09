@@ -7,12 +7,12 @@ plugins {
 android {
 
 	namespace = "com.loli.ball.esayplayer2.example"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.loli.ball.esayplayer2.example"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
     }
@@ -44,5 +44,5 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.0-beta01")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-    implementation("com.google.android.exoplayer:exoplayer:2.18.5")
+    implementation("androidx.media3:media3-exoplayer-hls:1.1.0")
 }
