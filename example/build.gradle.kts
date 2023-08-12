@@ -29,7 +29,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
 }
 
@@ -39,10 +39,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
     implementation(project(":easyplayer2"))
-    implementation("androidx.activity:activity-compose:1.7.0")
-    implementation("androidx.compose.runtime:runtime:1.4.0")
-    implementation("androidx.compose.material3:material3:1.1.0-beta01")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.0")
+    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.compose.runtime:runtime:1.5.0")
+    implementation("androidx.compose.material3:material3:1.1.1")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.1.0")
 }

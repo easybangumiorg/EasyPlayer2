@@ -24,7 +24,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
 }
 
@@ -47,9 +47,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-
-    //implementation("com.google.android.exoplayer:exoplayer:2.18.7")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
 
     val composeMaterialVersion = "1.4.3"
     implementation("androidx.compose.material:material:$composeMaterialVersion")
@@ -61,13 +59,11 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.compose.material3:material3:1.2.0-alpha04")
+    implementation("androidx.compose.material3:material3:1.1.1")
 
     val media3 = "1.1.0"
-    api ("androidx.media3:media3-exoplayer:${media3}")
-    api ("androidx.media3:media3-exoplayer-dash:${media3}")
-    api ("androidx.media3:media3-ui:${media3}")
-    api("androidx.media3:media3-exoplayer-hls:${media3}")
-
-
+    api("androidx.media3:media3-exoplayer:$media3")
+    api("androidx.media3:media3-exoplayer-dash:$media3")
+    api("androidx.media3:media3-ui:$media3")
+    api("androidx.media3:media3-exoplayer-hls:$media3")
 }
