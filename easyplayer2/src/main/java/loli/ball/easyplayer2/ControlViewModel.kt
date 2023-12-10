@@ -37,6 +37,7 @@ class ControlViewModel(
     val context: Context,
     val exoPlayer: ExoPlayer,
     val isPadMode: Boolean = false,
+    val scene: String? = null,
 ) : ViewModel(), Player.Listener {
 
     companion object {
@@ -281,7 +282,11 @@ class ControlViewModel(
     }
 
     fun onDisposed() {
-        exoPlayer.stop()
+        if (exoPlayer is IScenePlayer) {
+            exoPlayer.stop(scene ?: "")
+        } else {
+            exoPlayer.stop()
+        }
         exoPlayer.clearVideoSurfaceView(surfaceView)
     }
 
@@ -425,16 +430,22 @@ class ControlViewModelFactory(
     private val context: Context,
     private val exoPlayer: ExoPlayer,
     private val isPadMode: Boolean = false,
+    private val scene: String? = null,
 ) : ViewModelProvider.Factory {
 
     companion object {
         @Composable
-        fun viewModel(exoPlayer: ExoPlayer, isPadMode: Boolean = false): ControlViewModel {
+        fun viewModel(
+            exoPlayer: ExoPlayer,
+            isPadMode: Boolean = false,
+            scene: String? = null
+        ): ControlViewModel {
             return viewModel<ControlViewModel>(
                 factory = ControlViewModelFactory(
                     LocalContext.current,
                     exoPlayer,
-                    isPadMode = isPadMode
+                    isPadMode = isPadMode,
+                    scene
                 )
             )
         }
@@ -444,7 +455,7 @@ class ControlViewModelFactory(
     @SuppressWarnings("unchecked")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ControlViewModel::class.java))
-            return ControlViewModel(context, exoPlayer, isPadMode) as T
+            return ControlViewModel(context, exoPlayer, isPadMode, scene) as T
         throw RuntimeException("unknown class :" + modelClass.name)
     }
 
