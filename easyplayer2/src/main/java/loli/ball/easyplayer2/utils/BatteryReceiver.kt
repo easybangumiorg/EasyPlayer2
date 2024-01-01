@@ -51,7 +51,7 @@ class BatteryReceiver: BroadcastReceiver() {
 
         val total = extras.getInt(BatteryManager.EXTRA_SCALE) // 获得总电量
 
-        val status: Int = extras.getInt(BatteryManager.EXTRA_STATUS)?: -1
+        val status: Int = extras.getInt(BatteryManager.EXTRA_STATUS)
         val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
 
 

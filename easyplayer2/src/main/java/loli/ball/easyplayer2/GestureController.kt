@@ -146,7 +146,6 @@ fun GestureControllerScope.BrightVolumeUI() {
         when (brightVolumeType.value) {
             DragType.BRIGHTNESS -> Icons.Filled.LightMode
             DragType.VOLUME -> Icons.Filled.VolumeUp
-            else -> Icons.Filled.VolumeUp
         }
     }
     AnimatedVisibility(

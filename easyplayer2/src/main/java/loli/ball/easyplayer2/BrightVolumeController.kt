@@ -41,7 +41,7 @@ fun Modifier.brightVolume(
     return brightVolume(
         onShowUi = { type.value = it; showUi.value = true; onChange?.invoke(it) },
         onHideUi = { showUi.value = false },
-        callback = { type, _ -> onChange?.invoke(type) }
+        callback = { type1, _ -> onChange?.invoke(type1) }
     )
 }
 
