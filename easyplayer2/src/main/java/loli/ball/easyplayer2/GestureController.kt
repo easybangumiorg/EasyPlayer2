@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import loli.ball.easyplayer2.utils.TimeUtils
+import loli.ball.easyplayer2.utils.loge
 import loli.ball.easyplayer2.utils.pointerInput
 import loli.ball.easyplayer2.utils.systemVolume
 import loli.ball.easyplayer2.utils.windowBrightness
@@ -91,9 +92,11 @@ fun GestureController(
                 // 双击
                 detectTapGestures(
                     onTap = {
+                        "onTap".loge("GestureController")
                         vm.onSingleClick()
                     },
                     onDoubleTap = {
+                        "onDoubleTap".loge("GestureController")
                         vm.onPlayPause(!vm.playWhenReady)
                     }
                 )
@@ -112,6 +115,7 @@ fun GestureController(
                 // 横向滑动
                 detectHorizontalDragGestures(
                     onDragStart = {
+                        "onDragStart".loge("GestureController")
                         oldPosition = vm.position
                         horizontalOffset = 0F
                     },
@@ -120,7 +124,7 @@ fun GestureController(
                     onHorizontalDrag = { _: PointerInputChange, dragAmount: Float ->
                         horizontalOffset += dragAmount
                         val percent = horizontalOffset / viewSize.width
-                        vm.onPositionChange(oldPosition + (slideFullTime * percent).toLong())
+                        vm.onPositionChange(oldPosition + (slideFullTime * percent).toFloat())
                     },
                 )
             }
@@ -182,7 +186,7 @@ fun GestureControllerScope.SlideUI() {
         ) {
             Text(
                 textAlign = TextAlign.Center,
-                text = TimeUtils.toString(this@GestureControllerScope.vm.horizontalScrollPosition) + "/" +
+                text = TimeUtils.toString(this@GestureControllerScope.vm.horizontalScrollPosition.toLong()) + "/" +
                         TimeUtils.toString(this@GestureControllerScope.vm.during),
                 color = Color.White,
                 style = MaterialTheme.typography.titleLarge

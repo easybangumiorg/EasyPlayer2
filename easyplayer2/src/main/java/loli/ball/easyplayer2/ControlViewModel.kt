@@ -10,6 +10,7 @@ import androidx.annotation.UiThread
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -65,7 +66,9 @@ class ControlViewModel(
 
     var isNormalLockedControlShow by mutableStateOf(true)
 
-    var horizontalScrollPosition by mutableStateOf(0L)
+    var test by mutableFloatStateOf(0f)
+
+    var horizontalScrollPosition by mutableFloatStateOf(0F)
 
     var fullScreenState by mutableStateOf<Pair<Boolean, Boolean>>(false to false)
     val isFullScreen: Boolean
@@ -215,19 +218,20 @@ class ControlViewModel(
     }
 
     @UiThread
-    fun onPositionChange(position: Long) {
+    fun onPositionChange(position: Float) {
         if (!exoPlayer.isMedia()) {
             return
         }
+        controlState.loge("ControlViewModel")
+        horizontalScrollPosition =
+            position.coerceIn(0F, exoPlayer.duration.toFloat().coerceAtLeast(Float.MAX_VALUE))
+
         if (controlState == ControlState.Normal) {
             controlState = ControlState.HorizontalScroll
         }
-
-        horizontalScrollPosition =
-            position.coerceIn(0, exoPlayer.duration.coerceAtLeast(Int.MAX_VALUE.toLong()))
-
     }
 
+    fun t(){}
     fun onActionUP() {
         if (controlState == ControlState.Locked) {
             if (isLongPress) {
@@ -239,7 +243,7 @@ class ControlViewModel(
             return
         }
         if (controlState == ControlState.HorizontalScroll) {
-            exoPlayer.seekTo(horizontalScrollPosition)
+            exoPlayer.seekTo(horizontalScrollPosition.toLong())
         }
         controlState = ControlState.Normal
         showControlWithHideDelay()

@@ -8,10 +8,17 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,7 +27,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 import loli.ball.easyplayer2.*
+import loli.ball.easyplayer2.utils.loge
 
 /**
  * Created by LoliBall on 2023/3/25 19:13.
@@ -31,7 +40,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val url = "http://dbiptv.sn.chinamobile.com/PLTV/88888890/224/3221226231/index.m3u8"
+        val url = "https://media-oss.plasticmemory.net/m3u8/1693282570265.m3u8"
 
         val exo = ExoPlayer.Builder(this).build()
         exo.setMediaItem(MediaItem.fromUri(url))
@@ -133,12 +142,18 @@ private fun Content(exo: ExoPlayer) {
             ) {
 
                 // 手势
-                SimpleGestureController(vm = it, modifier = Modifier.fillMaxSize(), longTouchText = "X2")
+                SimpleGestureController(
+                    vm = it,
+                    modifier = Modifier.fillMaxSize(),
+                    longTouchText = "X2"
+                )
 
                 // 顶部工具栏
-                ElectricityTopBar(vm = it,
+                ElectricityTopBar(
+                    vm = it,
                     modifier = Modifier
-                        .align(Alignment.TopCenter))
+                        .align(Alignment.TopCenter)
+                )
 
                 // 底部工具栏
                 SimpleBottomBar(
@@ -164,14 +179,49 @@ private fun Content(exo: ExoPlayer) {
                 .background(MaterialTheme.colorScheme.surface)
         ) {
 
-
-
             Button(onClick = { controlVM.setSpeed(1.0f) }) {
                 Text(text = "1.0")
             }
             Button(onClick = { controlVM.setSpeed(2.0f) }) {
                 Text(text = "2.0")
             }
+            val position = controlVM.horizontalScrollPosition
+
+            Row {
+                TimeSlider(
+                    during = controlVM.during,
+                    position = position,
+                    onValueChange = {
+                       // "onValueChange".loge("EasyPlayerExtends")
+                        controlVM.onPositionChange(it)
+                    },
+                    onValueChangeFinish = {
+                        //"onValueChangeFinish".loge("EasyPlayerExtends")
+                        controlVM.onActionUP()
+                    }
+                )
+            }
+
+
+            val scope = rememberCoroutineScope()
+
+            Slider(
+                modifier = Modifier
+                    .background(Color.Red),
+                value = controlVM.horizontalScrollPosition,
+                onValueChange = {
+                    controlVM.onPositionChange(it)
+                    //controlVM.horizontalScrollPosition = it
+                },
+                onValueChangeFinished = {
+                    //controlVM.onActionUP()
+                    "onValueChangeFinish".loge("EasyPlayerExtends")
+                },
+                valueRange = 0F..controlVM.during.toFloat().coerceAtLeast(0F)
+            )
+
+
+
         }
 
     }

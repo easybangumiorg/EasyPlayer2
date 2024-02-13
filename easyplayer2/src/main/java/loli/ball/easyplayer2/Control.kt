@@ -118,17 +118,17 @@ fun RowScope.TimeText(
 @Composable
 fun RowScope.TimeSlider(
     during: Long,
-    position: Long,
-    onValueChange: (Long) -> Unit,
+    position: Float,
+    onValueChange: (Float) -> Unit,
     onValueChangeFinish: () -> Unit,
 ) {
     Slider(
         modifier = Modifier
-            .weight(1f)
-            .padding(4.dp, 0.dp),
-        value = position.toFloat(),
+            .background(Color.Red)
+            .weight(1f),
+        value = position,
         onValueChange = {
-            onValueChange(it.toLong())
+            onValueChange(it)
         },
         onValueChangeFinished = onValueChangeFinish,
         valueRange = 0F..during.toFloat().coerceAtLeast(0F)

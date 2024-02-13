@@ -28,10 +28,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +45,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import loli.ball.easyplayer2.utils.loge
@@ -151,18 +156,35 @@ fun SimpleBottomBar(
             })
             TimeText(time = vm.position, Color.White)
 
-            val position =
-                if (vm.controlState == ControlViewModel.ControlState.Normal) vm.position
-                else if (vm.controlState == ControlViewModel.ControlState.HorizontalScroll) vm.horizontalScrollPosition
-                else 0
+            var position by remember {
+                mutableFloatStateOf(0F)
+            }
+
+            LaunchedEffect(key1 = Unit){
+                launch {
+                    snapshotFlow {
+                        when (vm.controlState) {
+                            ControlViewModel.ControlState.Normal -> vm.position.toFloat()
+                            ControlViewModel.ControlState.HorizontalScroll -> vm.horizontalScrollPosition
+                            else -> 0F
+                        }
+                    }.collectLatest {
+                        //"snapshotFlow $it".loge("EasyPlayerExtends")
+                        position = it
+                    }
+                }
+            }
+
 
             TimeSlider(
                 during = vm.during,
                 position = position,
                 onValueChange = {
+                    "onValueChange $it".loge("EasyPlayerExtends")
                     vm.onPositionChange(it)
                 },
                 onValueChangeFinish = {
+                    "onValueChangeFinish".loge("EasyPlayerExtends")
                     vm.onActionUP()
                 }
             )
