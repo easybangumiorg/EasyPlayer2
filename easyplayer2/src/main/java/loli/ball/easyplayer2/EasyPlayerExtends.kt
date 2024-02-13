@@ -8,6 +8,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -103,31 +106,28 @@ fun ElectricityTopBar(
             val br = rememberBatteryReceiver()
 
 
-            val ic = if(br.isCharge.value){
+            val ic = if (br.isCharge.value) {
                 Icons.Filled.BatteryChargingFull
-            }else{
-                if(br.electricity.value <= 10){
+            } else {
+                if (br.electricity.value <= 10) {
                     Icons.Filled.Battery0Bar
-                }else if(br.electricity.value <= 20){
+                } else if (br.electricity.value <= 20) {
                     Icons.Filled.Battery2Bar
-                }else if(br.electricity.value <= 40){
+                } else if (br.electricity.value <= 40) {
                     Icons.Filled.Battery3Bar
-                }
-                else if(br.electricity.value <= 60){
+                } else if (br.electricity.value <= 60) {
                     Icons.Filled.Battery4Bar
-                } else if(br.electricity.value <= 70){
+                } else if (br.electricity.value <= 70) {
                     Icons.Filled.Battery5Bar
-                }else if(br.electricity.value <= 90) {
+                } else if (br.electricity.value <= 90) {
                     Icons.Filled.Battery6Bar
-                }else{
+                } else {
                     Icons.Filled.BatteryFull
                 }
             }
-            Icon(ic, "el", modifier = Modifier.rotate(90F),tint = Color.White)
+            Icon(ic, "el", modifier = Modifier.rotate(90F), tint = Color.White)
             Text(text = "${br.electricity.value}%", color = Color.White)
             Spacer(modifier = Modifier.size(16.dp))
-
-
 
 
         }
@@ -156,25 +156,23 @@ fun SimpleBottomBar(
             })
             TimeText(time = vm.position, Color.White)
 
-            var position by remember {
-                mutableFloatStateOf(0F)
-            }
 
-            LaunchedEffect(key1 = Unit){
-                launch {
-                    snapshotFlow {
-                        when (vm.controlState) {
-                            ControlViewModel.ControlState.Normal -> vm.position.toFloat()
-                            ControlViewModel.ControlState.HorizontalScroll -> vm.horizontalScrollPosition
-                            else -> 0F
+
+            val position by remember {
+                derivedStateOf {
+                    when (vm.controlState) {
+                        ControlViewModel.ControlState.HorizontalScroll -> {
+                            vm.horizontalScrollPosition
                         }
-                    }.collectLatest {
-                        //"snapshotFlow $it".loge("EasyPlayerExtends")
-                        position = it
+                        ControlViewModel.ControlState.Normal -> {
+                            vm.position.toFloat()
+                        }
+                        else -> {
+                            0f
+                        }
                     }
                 }
             }
-
 
             TimeSlider(
                 during = vm.during,
@@ -186,6 +184,70 @@ fun SimpleBottomBar(
                 onValueChangeFinish = {
                     "onValueChangeFinish".loge("EasyPlayerExtends")
                     vm.onActionUP()
+                }
+            )
+
+            TimeText(time = vm.during, Color.White)
+
+            otherAction?.invoke(this, vm)
+
+            val ctx = LocalContext.current as Activity
+            FullScreenBtn(isFullScreen = vm.isFullScreen, onClick = {
+                vm.onFullScreen(it, ctx = ctx)
+            })
+        }
+    }
+
+}
+
+@Composable
+fun SimpleBottomBarWithSeekBar(
+    vm: ControlViewModel,
+    modifier: Modifier = Modifier,
+    paddingValues: PaddingValues = PaddingValues(0.dp),
+    otherAction: (@Composable RowScope.(ControlViewModel) -> Unit)? = null,
+) {
+    AnimatedVisibility(
+        modifier = modifier,
+        visible = vm.isShowOverlay(),
+        exit = fadeOut(),
+        enter = fadeIn(),
+    ) {
+        BottomControl(
+            paddingValues
+        ) {
+            PlayPauseBtn(isPlaying = vm.playWhenReady, onClick = {
+                vm.onPlayPause(it)
+            })
+            TimeText(time = vm.position, Color.White)
+
+
+
+            val position by remember {
+                derivedStateOf {
+                    when (vm.controlState) {
+                        ControlViewModel.ControlState.HorizontalScroll -> {
+                            vm.horizontalScrollPosition
+                        }
+                        ControlViewModel.ControlState.Normal -> {
+                            vm.position.toFloat()
+                        }
+                        else -> {
+                            0f
+                        }
+                    }
+                }
+            }
+
+            ViewSeekBar(
+                during = vm.during.toInt(),
+                position = position.toInt(),
+                secondary = vm.bufferPosition.toInt(),
+                onValueChange = {
+                    vm.onPositionChange(it.toFloat())
+                },
+                onValueChangeFinish = {
+                    vm.onActionUPScope()
                 }
             )
 

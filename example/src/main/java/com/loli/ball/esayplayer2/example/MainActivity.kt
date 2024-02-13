@@ -4,6 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,19 +19,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import loli.ball.easyplayer2.*
 import loli.ball.easyplayer2.utils.loge
@@ -192,7 +203,7 @@ private fun Content(exo: ExoPlayer) {
                     during = controlVM.during,
                     position = position,
                     onValueChange = {
-                       // "onValueChange".loge("EasyPlayerExtends")
+                        // "onValueChange".loge("EasyPlayerExtends")
                         controlVM.onPositionChange(it)
                     },
                     onValueChangeFinish = {
@@ -204,22 +215,55 @@ private fun Content(exo: ExoPlayer) {
 
 
             val scope = rememberCoroutineScope()
+            val source = remember { MutableInteractionSource() }
+
+            val isDragged by source.collectIsDraggedAsState()
+            val isPress by source.collectIsPressedAsState()
+            var isChange by remember {
+                mutableStateOf(false)
+            }
+
+
+            LaunchedEffect(key1 = Unit) {
+                launch {
+                    snapshotFlow {
+                        (!isDragged && !isPress) to isChange
+                    }.collect {
+                        if (it.first) {
+                            controlVM.onActionUPScope()
+                            isChange = false
+                        }
+                    }
+                }
+                launch {
+                    snapshotFlow {
+                        isPress to isChange
+                    }.collectLatest {
+                        if(!isPress){
+                            isChange = false
+                            controlVM.onActionUPScope()
+                        }
+                    }
+
+                }
+            }
 
             Slider(
                 modifier = Modifier
                     .background(Color.Red),
                 value = controlVM.horizontalScrollPosition,
                 onValueChange = {
+                    isChange = true
                     controlVM.onPositionChange(it)
                     //controlVM.horizontalScrollPosition = it
                 },
                 onValueChangeFinished = {
-                    //controlVM.onActionUP()
+                    //controlVM//.onActionUP()
                     "onValueChangeFinish".loge("EasyPlayerExtends")
                 },
-                valueRange = 0F..controlVM.during.toFloat().coerceAtLeast(0F)
+                valueRange = 0F..controlVM.during.toFloat().coerceAtLeast(0F),
+                interactionSource = source
             )
-
 
 
         }

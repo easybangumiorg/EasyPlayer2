@@ -217,6 +217,18 @@ class ControlViewModel(
         isLoading = true
     }
 
+    fun onPositionChangeStart() {
+        if (!exoPlayer.isMedia()) {
+            return
+        }
+        controlState.loge("ControlViewModel")
+        horizontalScrollPosition =
+            position.toFloat().coerceIn(0F, exoPlayer.duration.toFloat().coerceAtLeast(Float.MAX_VALUE))
+        if (controlState == ControlState.Normal) {
+            controlState = ControlState.HorizontalScroll
+        }
+    }
+
     @UiThread
     fun onPositionChange(position: Float) {
         if (!exoPlayer.isMedia()) {
@@ -231,7 +243,12 @@ class ControlViewModel(
         }
     }
 
-    fun t(){}
+    fun onActionUPScope() {
+        viewModelScope.launch {
+            onActionUP()
+        }
+    }
+
     fun onActionUP() {
         if (controlState == ControlState.Locked) {
             if (isLongPress) {
@@ -402,6 +419,7 @@ class ControlViewModel(
             if (!isMedia()) return
             during = duration.let { if (it == TIME_UNSET) 0 else it }
             position = currentPosition
+            horizontalScrollPosition = currentPosition.toFloat()
             bufferPosition = bufferedPosition
         }
     }
