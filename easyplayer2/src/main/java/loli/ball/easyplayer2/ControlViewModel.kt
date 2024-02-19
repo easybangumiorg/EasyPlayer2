@@ -120,6 +120,8 @@ class ControlViewModel(
     @SuppressLint("SourceLockedOrientationActivity")
     fun onFullScreen(fullScreen: Boolean, reverse: Boolean = false, ctx: Activity) {
         viewModelScope.launch {
+            isFastRewindWinShow = false
+            isFastForwardWinShow = false
             val oldFullScreen = isFullScreen
             val oldReverse = isReverse
             if (oldFullScreen != fullScreen || oldReverse != reverse) {
@@ -152,6 +154,8 @@ class ControlViewModel(
 
     private var lastOrientation = 0
     fun onOrientation(orientation: Int, act: Activity) {
+        isFastRewindWinShow = false
+        isFastForwardWinShow = false
         if (controlState != ControlState.Normal || isLongPress) {
             return
         }
@@ -210,6 +214,8 @@ class ControlViewModel(
     @UiThread
     fun onPlayPause(isPlay: Boolean) {
         exoPlayer.playWhenReady = isPlay
+        isFastRewindWinShow = false
+        isFastForwardWinShow = false
     }
 
     fun fastForward() {
@@ -225,18 +231,8 @@ class ControlViewModel(
     @UiThread
     fun onPrepare() {
         isLoading = true
-    }
-
-    fun onPositionChangeStart() {
-        if (!exoPlayer.isMedia()) {
-            return
-        }
-        controlState.loge("ControlViewModel")
-        horizontalScrollPosition =
-            position.toFloat().coerceIn(0F, exoPlayer.duration.toFloat().coerceAtLeast(Float.MAX_VALUE))
-        if (controlState == ControlState.Normal) {
-            controlState = ControlState.HorizontalScroll
-        }
+        isFastRewindWinShow = false
+        isFastForwardWinShow = false
     }
 
     @UiThread
@@ -272,6 +268,8 @@ class ControlViewModel(
         if (controlState == ControlState.HorizontalScroll) {
             exoPlayer.seekTo(horizontalScrollPosition.toLong())
         }
+        isFastRewindWinShow = false
+        isFastForwardWinShow = false
         controlState = ControlState.Normal
         showControlWithHideDelay()
         if (isLongPress) {
