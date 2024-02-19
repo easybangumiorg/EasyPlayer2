@@ -74,15 +74,18 @@ fun GestureControllerWithFast(
     fastForwardText: String = "快进",
     fastBackText: String = "快退",
     fastWinDelay: Long = 2000,
+    fastWeight: Float = 0.2f
 ) {
-    GestureController(vm, modifier, slideFullTime, supportFast = true) {
+    GestureController(vm, modifier, slideFullTime, supportFast = true, fastWeight = fastWeight) {
         BrightVolumeUI()
         SlideUI()
         LongTouchUI(longTouchText)
         FastUI(
             fastForwardText = fastForwardText,
             fastRewindText = fastBackText,
-            fastWinDelay
+            fastWeight = fastWeight,
+            delayTime = fastWinDelay,
+
         )
 
     }
@@ -94,6 +97,7 @@ fun GestureController(
     modifier: Modifier = Modifier,
     slideFullTime: Long = 300000,
     supportFast: Boolean = false,
+    fastWeight: Float = 0.2f,
     content: @Composable GestureControllerScope.(ControlViewModel) -> Unit,
 ) {
     val ctx = LocalContext.current as Activity
@@ -128,9 +132,9 @@ fun GestureController(
                         "onDoubleTap".loge("GestureController")
                         if (!supportFast) {
                             vm.onPlayPause(!vm.playWhenReady)
-                        } else if (it.x < viewSize.width / 4f) {
+                        } else if (it.x < viewSize.width * fastWeight) {
                             vm.fastRewind()
-                        } else if (it.x > viewSize.width * 3f / 4f) {
+                        } else if (it.x > viewSize.width * (1 - fastWeight)) {
                             vm.fastForward()
                         } else {
                             vm.onPlayPause(!vm.playWhenReady)
@@ -281,6 +285,7 @@ fun GestureControllerScope.LongTouchUI(text: String = "2x") {
 fun GestureControllerScope.FastUI(
     fastForwardText: String = "快进",
     fastRewindText: String = "快退",
+    fastWeight: Float = 0.2f,
     delayTime: Long = 2000
 ) {
     LaunchedEffect(key1 = Unit) {
@@ -310,7 +315,7 @@ fun GestureControllerScope.FastUI(
         AnimatedVisibility(
             visible = this@FastUI.vm.isFastRewindWinShow,
             modifier = Modifier
-                .weight(1f)
+                .weight(maxOf(fastWeight, 0.2f))
                 .fillMaxHeight(),
             enter = fadeIn(),
             exit = fadeOut()
@@ -350,11 +355,11 @@ fun GestureControllerScope.FastUI(
                 }
             }
         }
-        Spacer(modifier = Modifier.weight(4f))
+        Spacer(modifier = Modifier.weight(1f))
         AnimatedVisibility(
             visible = this@FastUI.vm.isFastForwardWinShow,
             modifier = Modifier
-                .weight(1f)
+                .weight(maxOf(fastWeight, 0.2f) )
                 .fillMaxHeight(),
             enter = fadeIn(),
             exit = fadeOut()
