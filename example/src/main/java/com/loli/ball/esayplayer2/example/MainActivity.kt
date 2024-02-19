@@ -153,10 +153,11 @@ private fun Content(exo: ExoPlayer) {
             ) {
 
                 // 手势
-                SimpleGestureController(
+                GestureControllerWithFast(
                     vm = it,
                     modifier = Modifier.fillMaxSize(),
-                    longTouchText = "X2"
+                    longTouchText = "X2",
+                    fastWinDelay = 500
                 )
 
                 // 顶部工具栏
@@ -167,7 +168,7 @@ private fun Content(exo: ExoPlayer) {
                 )
 
                 // 底部工具栏
-                SimpleBottomBar(
+                SimpleBottomBarWithSeekBar(
                     vm = it,
                     modifier = Modifier
                         .align(Alignment.BottomCenter),

@@ -8,7 +8,6 @@ import android.provider.Settings
 import android.view.OrientationEventListener
 import androidx.annotation.UiThread
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -66,8 +65,6 @@ class ControlViewModel(
 
     var isNormalLockedControlShow by mutableStateOf(true)
 
-    var test by mutableFloatStateOf(0f)
-
     var horizontalScrollPosition by mutableFloatStateOf(0F)
 
     var fullScreenState by mutableStateOf<Pair<Boolean, Boolean>>(false to false)
@@ -90,6 +87,9 @@ class ControlViewModel(
 
     var isLongPress by mutableStateOf(false)
     var lastSpeed = 1.0f
+
+    var isFastForwardWinShow by mutableStateOf(false)
+    var isFastRewindWinShow by mutableStateOf(false)
 
     // 设置的倍速，不一定是真正的播放速度
     // 可以用于倍速控制器显示
@@ -210,6 +210,16 @@ class ControlViewModel(
     @UiThread
     fun onPlayPause(isPlay: Boolean) {
         exoPlayer.playWhenReady = isPlay
+    }
+
+    fun fastForward() {
+        exoPlayer.seekForward()
+        isFastForwardWinShow = true
+    }
+
+    fun fastRewind() {
+        exoPlayer.seekBack()
+        isFastRewindWinShow = true
     }
 
     @UiThread

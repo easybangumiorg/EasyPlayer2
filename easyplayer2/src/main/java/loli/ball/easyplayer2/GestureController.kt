@@ -9,9 +9,11 @@ import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
+import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
@@ -28,6 +30,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import loli.ball.easyplayer2.utils.TimeUtils
 import loli.ball.easyplayer2.utils.loge
 import loli.ball.easyplayer2.utils.pointerInput
@@ -61,10 +66,34 @@ fun SimpleGestureController(
 }
 
 @Composable
+fun GestureControllerWithFast(
+    vm: ControlViewModel,
+    modifier: Modifier = Modifier,
+    slideFullTime: Long = 300000,
+    longTouchText: String = "2x",
+    fastForwardText: String = "快进",
+    fastBackText: String = "快退",
+    fastWinDelay: Long = 2000,
+) {
+    GestureController(vm, modifier, slideFullTime, supportFast = true) {
+        BrightVolumeUI()
+        SlideUI()
+        LongTouchUI(longTouchText)
+        FastUI(
+            fastForwardText = fastForwardText,
+            fastRewindText = fastBackText,
+            fastWinDelay
+        )
+
+    }
+}
+
+@Composable
 fun GestureController(
     vm: ControlViewModel,
     modifier: Modifier = Modifier,
     slideFullTime: Long = 300000,
+    supportFast: Boolean = false,
     content: @Composable GestureControllerScope.(ControlViewModel) -> Unit,
 ) {
     val ctx = LocalContext.current as Activity
@@ -97,7 +126,16 @@ fun GestureController(
                     },
                     onDoubleTap = {
                         "onDoubleTap".loge("GestureController")
-                        vm.onPlayPause(!vm.playWhenReady)
+                        if (!supportFast) {
+                            vm.onPlayPause(!vm.playWhenReady)
+                        } else if (it.x < viewSize.width / 4f) {
+                            vm.fastRewind()
+                        } else if (it.x > viewSize.width * 3f / 4f) {
+                            vm.fastForward()
+                        } else {
+                            vm.onPlayPause(!vm.playWhenReady)
+                        }
+
                     }
                 )
             }
@@ -137,7 +175,13 @@ fun GestureController(
             }
     ) {
         val scope = remember(this, vm) {
-            GestureControllerScope(this, vm, showBrightVolumeUi, brightVolumeTYpe,brightVolumeUiText)
+            GestureControllerScope(
+                this,
+                vm,
+                showBrightVolumeUi,
+                brightVolumeTYpe,
+                brightVolumeUiText
+            )
         }
         scope.content(vm)
     }
@@ -231,4 +275,123 @@ fun GestureControllerScope.LongTouchUI(text: String = "2x") {
             }
         }
     }
+}
+
+@Composable
+fun GestureControllerScope.FastUI(
+    fastForwardText: String = "快进",
+    fastRewindText: String = "快退",
+    delayTime: Long = 2000
+) {
+    LaunchedEffect(key1 = Unit) {
+        launch {
+            snapshotFlow {
+                vm.isFastRewindWinShow
+            }.collectLatest {
+                if (it) {
+                    delay(delayTime)
+                    vm.isFastRewindWinShow = false
+                }
+            }
+        }
+        launch {
+            snapshotFlow {
+                vm.isFastForwardWinShow
+            }.collectLatest {
+                if (it) {
+                    delay(delayTime)
+                    vm.isFastForwardWinShow = false
+                }
+            }
+        }
+    }
+
+    Row(modifier = Modifier.fillMaxSize()){
+        AnimatedVisibility(
+            visible = this@FastUI.vm.isFastRewindWinShow,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Box(
+                Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            CornerSize(0),
+                            CornerSize(100),
+                            CornerSize(100),
+                            CornerSize(0)
+                        )
+                    )
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        Icons.Filled.FastRewind,
+                        null,
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        text = fastRewindText,
+                        color = Color.White
+                    )
+
+
+                }
+            }
+        }
+        Spacer(modifier = Modifier.weight(4f))
+        AnimatedVisibility(
+            visible = this@FastUI.vm.isFastForwardWinShow,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Box(
+                Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            CornerSize(100),
+                            CornerSize(0),
+                            CornerSize(0),
+                            CornerSize(100)
+                        )
+                    )
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        text = fastForwardText,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Icon(
+                        Icons.Filled.FastForward,
+                        null,
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
+    }
+
 }
