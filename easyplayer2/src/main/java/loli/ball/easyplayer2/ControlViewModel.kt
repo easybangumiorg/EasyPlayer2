@@ -427,7 +427,9 @@ class ControlViewModel(
             if (!isMedia()) return
             during = duration.let { if (it == TIME_UNSET) 0 else it }
             position = currentPosition
-            horizontalScrollPosition = currentPosition.toFloat()
+            if (controlState == ControlState.Normal) {
+                horizontalScrollPosition = currentPosition.toFloat()
+            }
             bufferPosition = bufferedPosition
         }
     }
