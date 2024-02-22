@@ -355,7 +355,7 @@ fun GestureControllerScope.FastUI(
                 }
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f - fastWeight))
         AnimatedVisibility(
             visible = this@FastUI.vm.isFastForwardWinShow,
             modifier = Modifier
