@@ -121,7 +121,7 @@ fun GestureController(
             .fillMaxSize()
             .then(modifier)
             .onSizeChanged { viewSize = it }
-            .pointerInput("单机双击", true) {
+            .pointerInput("单机双击", enableGuest) {
                 // 双击
                 detectTapGestures(
                     onTap = {
@@ -143,7 +143,7 @@ fun GestureController(
                     }
                 )
             }
-            .pointerInput("长按倍速", true) {
+            .pointerInput("长按倍速", enableGuest) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { vm.onLongPress() },
                     onDragCancel = { vm.onActionUP() },
