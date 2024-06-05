@@ -89,7 +89,9 @@ class ControlViewModel(
     var lastSpeed = 1.0f
 
     var isFastForwardWinShow by mutableStateOf(false)
+    var isFastForwardTopShow by mutableStateOf(false)
     var isFastRewindWinShow by mutableStateOf(false)
+    var isFastRewindTopShow by mutableStateOf(false)
 
     // 设置的倍速，不一定是真正的播放速度
     // 可以用于倍速控制器显示
@@ -223,9 +225,19 @@ class ControlViewModel(
         isFastForwardWinShow = true
     }
 
+    fun fastForwardTop(offset: Long) {
+        exoPlayer.seekTo(exoPlayer.currentPosition + offset)
+        isFastForwardTopShow = true
+    }
+
     fun fastRewind() {
         exoPlayer.seekBack()
         isFastRewindWinShow = true
+    }
+
+    fun fastRewindTop(offset: Long) {
+        exoPlayer.seekTo(exoPlayer.currentPosition - offset)
+        isFastRewindTopShow = true
     }
 
     @UiThread
