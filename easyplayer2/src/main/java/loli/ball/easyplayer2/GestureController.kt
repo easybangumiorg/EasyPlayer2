@@ -191,6 +191,7 @@ fun GestureController(
     }
 }
 
+
 // 音量 亮度
 @Composable
 fun GestureControllerScope.BrightVolumeUI() {
