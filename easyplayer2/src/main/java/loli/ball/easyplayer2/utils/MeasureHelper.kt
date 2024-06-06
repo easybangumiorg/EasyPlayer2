@@ -14,7 +14,7 @@ class MeasureHelper {
         const val SCREEN_SCALE_16_9 = 1             // 16/9
         const val SCREEN_SCALE_4_3 = 2              // 4/3
         const val SCREEN_SCALE_MATCH_PARENT = 3     // 拉伸
-        const val SCREEN_SCALE_ORIGINAL = 4         // 平铺
+        const val SCREEN_SCALE_ORIGINAL = 4         // 原始大小
         const val SCREEN_SCALE_CENTER_CROP = 5      // 平铺，从中心裁切，保证占满屏幕
         const val SCREEN_SCALE_ADAPT = 6            // 保证长或宽与屏幕相等，比例不变
     }

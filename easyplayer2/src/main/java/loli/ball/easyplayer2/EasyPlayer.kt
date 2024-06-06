@@ -112,21 +112,6 @@ fun EasyPlayer(
                 }
             }
             Box(modifier = surModifier, contentAlignment = Alignment.Center) {
-//                DisposableEffect(key1 = Unit ){
-//                    kotlin.runCatching {
-//                        (vm.surfaceView.parent as ViewGroup).removeView(vm.surfaceView)
-//                    }.onFailure {
-//                        it.printStackTrace()
-//                    }
-//
-//                    onDispose {
-//                        kotlin.runCatching {
-//                            (vm.surfaceView.parent as ViewGroup).removeView(vm.surfaceView)
-//                        }.onFailure {
-//                            it.printStackTrace()
-//                        }
-//                    }
-//                }
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
                     factory = {
