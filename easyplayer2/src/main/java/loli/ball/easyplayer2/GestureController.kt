@@ -85,9 +85,7 @@ fun GestureControllerWithFast(
             fastForwardText = fastForwardText,
             fastRewindText = fastBackText,
             fastWeight = fastWeight,
-            delayTime = fastWinDelay,
-
-            )
+            delayTime = fastWinDelay,)
 
     }
 }
@@ -237,13 +235,13 @@ fun GestureController(
                             vm.onPlayPause(!vm.playWhenReady)
                         } else if (it.x < viewSize.width * horizontalDoubleTapWeight) {
                             if (it.y < viewSize.height * verticalDoubleTapWeight) {
-                                vm.fastForwardTop(topFastTime)
+                                vm.fastRewindTop(topFastTime)
                             } else {
-                                vm.fastForward()
+                                vm.fastRewind()
                             }
                         } else if (it.x > viewSize.width * (1 - horizontalDoubleTapWeight)) {
                             if (it.y < viewSize.height * verticalDoubleTapWeight) {
-                                vm.fastRewindTop(topFastTime)
+                                vm.fastForwardTop(topFastTime)
                             } else {
                                 vm.fastForward()
                             }
