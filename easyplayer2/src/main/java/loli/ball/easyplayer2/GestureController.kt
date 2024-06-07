@@ -222,7 +222,7 @@ fun GestureController(
             .fillMaxSize()
             .then(modifier)
             .onSizeChanged { viewSize = it }
-            .pointerInput("单机双击", enableGuest) {
+            .pointerInput("单机双击", true) {
                 // 双击
                 detectTapGestures(
                     onTap = {
@@ -231,7 +231,10 @@ fun GestureController(
                     },
                     onDoubleTap = {
                         "onDoubleTap".loge("GestureController")
-                        if (!supportFast) {
+                        if (vm.controlState == ControlViewModel.ControlState.Locked){
+                            return@detectTapGestures
+                        }
+                        if (!supportFast || !vm.isFullScreen) {
                             vm.onPlayPause(!vm.playWhenReady)
                         } else if (it.x < viewSize.width * horizontalDoubleTapWeight) {
                             if (it.y < viewSize.height * verticalDoubleTapWeight) {
