@@ -1,6 +1,7 @@
 package loli.ball.easyplayer2
 
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -115,14 +116,16 @@ fun EasyPlayer(
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
                     factory = {
+                        val root = FrameLayout(it)
                         vm.surfaceView.apply {
                             kotlin.runCatching {
                                 (parent as? ViewGroup)?.removeView(this)
+                                root.addView(this, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
                             }.onFailure {
                                 it.printStackTrace()
                             }
-
                         }
+                        root
                     }
                 )
             }
