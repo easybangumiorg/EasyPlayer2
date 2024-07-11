@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import loli.ball.easyplayer2.utils.OnLifecycleEvent
 import loli.ball.easyplayer2.utils.OnOrientationEvent
+import loli.ball.easyplayer2.utils.loge
 
 /**
  * Created by LoliBall on 2023/4/3 0:34.
@@ -28,6 +29,7 @@ fun EasyPlayerStateSync(vm: ControlViewModel) {
         vm.onLaunch()
         val old = ctx.requestedOrientation
         onDispose {
+            "onDisposed".loge("EasyPlayerStateSync")
             vm.onDisposed()
             ctx.requestedOrientation = old
         }

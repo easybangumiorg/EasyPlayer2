@@ -49,21 +49,25 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
 
-    val composeMaterialVersion = "1.6.1"
+    val composeMaterialVersion = "1.6.8"
     implementation("androidx.compose.material:material:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-core:$composeMaterialVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeMaterialVersion")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.compose.material3:material3:1.2.1")
 
-    val media3 = "1.2.1"
+    val media3 = "1.4.0-alpha02"
     api("androidx.media3:media3-exoplayer:$media3")
     api("androidx.media3:media3-exoplayer-dash:$media3")
     api("androidx.media3:media3-ui:$media3")
     api("androidx.media3:media3-exoplayer-hls:$media3")
+    api("androidx.media3:media3-transformer:$media3")
+    api("androidx.media3:media3-common:$media3")
+    api("androidx.media3:media3-effect:$media3")
+    api("androidx.media3:media3-muxer:$media3")
 }
